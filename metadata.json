@@ -1,0 +1,6 @@
+{
+  "name": "OmniDesk Harness - AI Evaluation Arena & Workspace",
+  "description": "Multi-model AI evaluation harness with side-by-side model arena, blind voting, automated test evals, prompt workbench, and RAG grounding.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
