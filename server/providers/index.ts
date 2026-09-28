@@ -2,7 +2,6 @@ import { db } from '../db.js';
 import type { StreamChatRequest, StreamChunk } from './types.js';
 import { streamGemini } from './gemini.js';
 import { streamOpenAI } from './openai.js';
-import { streamAnthropic } from './anthropic.js';
 import { streamXAI } from './xai.js';
 
 export async function* routeChatStream(req: StreamChatRequest): AsyncGenerator<StreamChunk> {
@@ -23,7 +22,6 @@ export async function* routeChatStream(req: StreamChatRequest): AsyncGenerator<S
   if (!apiKey) {
     if (provider === 'google') apiKey = process.env.GEMINI_API_KEY;
     else if (provider === 'openai') apiKey = process.env.OPENAI_API_KEY;
-    else if (provider === 'anthropic') apiKey = process.env.ANTHROPIC_API_KEY;
     else if (provider === 'xai') apiKey = process.env.XAI_API_KEY;
   }
 
@@ -33,9 +31,6 @@ export async function* routeChatStream(req: StreamChatRequest): AsyncGenerator<S
       break;
     case 'openai':
       yield* streamOpenAI(req, apiKey);
-      break;
-    case 'anthropic':
-      yield* streamAnthropic(req, apiKey);
       break;
     case 'xai':
       yield* streamXAI(req, apiKey);

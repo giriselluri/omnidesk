@@ -6,11 +6,11 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/providers', (req, res) => {
-  const providers = (['google', 'openai', 'anthropic', 'xai'] as const).map((p) => {
+  const providers = (['google', 'openai', 'xai'] as const).map((p) => {
     const cred = db.credentials.get(p);
     return {
       id: p,
-      name: p === 'google' ? 'Google Gemini' : p === 'openai' ? 'OpenAI GPT' : p === 'anthropic' ? 'Anthropic Claude' : 'xAI Grok',
+      name: p === 'google' ? 'Google Gemini' : p === 'openai' ? 'OpenAI GPT' : 'xAI Grok',
       status: p === 'google' || cred?.encryptedSecret ? 'active' : 'unconfigured',
       hasKey: Boolean(p === 'google' || cred?.encryptedSecret),
     };

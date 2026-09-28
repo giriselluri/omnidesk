@@ -145,7 +145,7 @@ router.put('/quotas/:userId', (req, res) => {
 
 // --- Provider Credentials Management (Zero Leak!) ---
 router.get('/providers', (req, res) => {
-  const list = (['google', 'openai', 'anthropic', 'xai'] as ProviderId[]).map((p) => {
+  const list = (['google', 'openai', 'xai'] as ProviderId[]).map((p) => {
     const cred = db.credentials.get(p);
     return {
       provider: p,
@@ -267,7 +267,6 @@ router.get('/usage/summary', (req, res) => {
   const providerBreakdown: Record<string, { microUsd: number; tokens: number; requests: number }> = {
     google: { microUsd: 0, tokens: 0, requests: 0 },
     openai: { microUsd: 0, tokens: 0, requests: 0 },
-    anthropic: { microUsd: 0, tokens: 0, requests: 0 },
     xai: { microUsd: 0, tokens: 0, requests: 0 },
   };
 

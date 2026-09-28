@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import authRoutes from './server/routes/auth.js';
@@ -51,24 +52,33 @@ async function startServer() {
 
   // Development vs Production frontend serving
   const isProduction = process.env.NODE_ENV === 'production';
+  const distPath = path.resolve(__dirname, 'dist');
+  const indexHtmlPath = path.resolve(distPath, 'index.html');
+  const hasDist = fs.existsSync(indexHtmlPath);
 
-  if (!isProduction) {
+  if (isProduction && hasDist) {
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(indexHtmlPath, (err) => {
+        if (err && !res.headersSent) {
+          res.status(500).send('Error loading application.');
+        }
+      });
+    });
+  } else {
+    // If in dev OR if dist hasn't been built yet on platforms like Render,
+    // gracefully mount Vite server middleware to dynamically compile and serve the React app without crashing.
+    console.log(`[OmniDesk] Serving frontend via Vite middleware (isProduction: ${isProduction}, hasDist: ${hasDist})`);
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.resolve(__dirname, 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.resolve(distPath, 'index.html'));
-    });
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[OmniDesk] Server running in ${isProduction ? 'production' : 'development'} on http://0.0.0.0:${PORT}`);
+    console.log(`[OmniDesk] Server running on http://0.0.0.0:${PORT} (mode: ${isProduction && hasDist ? 'production-static' : 'vite-middleware'})`);
   });
 }
 
