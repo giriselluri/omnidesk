@@ -71,7 +71,7 @@ async function startServer() {
     console.log(`[OmniDesk] Serving frontend via Vite middleware (isProduction: ${isProduction}, hasDist: ${hasDist})`);
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, allowedHosts: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
